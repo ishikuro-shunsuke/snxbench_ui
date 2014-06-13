@@ -4,6 +4,24 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var serialport = require('serialport');
+var SerialPort = serialport.SerialPort;
+var serialPort = new SerialPort('/dev/ttyUSB0', {
+  baudrate: 9600,
+  parser: serialport.parsers.readline("\n")
+}, false);
+
+// serialport
+serialPort.open(function() {
+  console.log('SerialPort:open');
+  serialPort.on('data', function(data) {
+    console.log('SerialPort:data received: ' + data);
+  });
+  serialPort.write("ls\n", function(err, results) {
+    console.log('err ' + err);
+    console.log('results ' + results);
+  });
+});
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -57,3 +75,4 @@ app.use(function(err, req, res, next) {
 
 
 module.exports = app;
+
