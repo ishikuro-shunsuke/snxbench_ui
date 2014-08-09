@@ -1,4 +1,4 @@
-var app = andular.module('App', []);
+var app = angular.module('App', []);
 app.controller('opCtrl', function ($scope, socket) {
   $scope.op = "undefined";
   $scope.push_op = function (op) {
@@ -13,7 +13,7 @@ app.controller('opCtrl', function ($scope, socket) {
 
 // using the Angular factory to inject
 app.factory('socket', function ($rootScope) {
-  var socket = io.connect('http://localhost:3001');
+  var socket = io.connect();
   return {
     on: function (eventName, callback) {
       socket.on(eventName, function () {
