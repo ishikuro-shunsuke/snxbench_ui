@@ -5,3 +5,5 @@ block content
     div
       h1= title
       p Welcome to #{title}
+      div(ng-controller='updateCtrl as update')
+        p {{ update.op.op1 }}
