@@ -1,4 +1,4 @@
-var io = require('socket.io').listen(80);
+var io = require('socket.io').listen(3001);
 var serialport = require('serialport');
 var SerialPort = serialport.SerialPort;
 var serialPort = new SerialPort('COM6', {
@@ -67,3 +67,4 @@ io.sockets.on('connection', function (socket) {
     console.log('disconnected');
   });
 });
+

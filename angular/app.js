@@ -13,7 +13,7 @@ app.controller('opCtrl', function ($scope, socket) {
 
 // using the Angular factory to inject
 app.factory('socket', function ($rootScope) {
-  var socket = io.connect();
+  var socket = io.connect('http://localhost:3001');
   return {
     on: function (eventName, callback) {
       socket.on(eventName, function () {
