@@ -16,9 +16,6 @@ var serialPort = new SerialPort('COM6', {
 io.on('connection', function (socket) {
   socket.on('push_op', function (op) {
     console.log('socket:data sending: ' + op);
-    io.sockets.emit('send:op', {
-      op: op
-    });
   })
 }),
 
@@ -69,10 +66,12 @@ serialPort.open(function() {
       op = 'BAL';
       break;
     }
-    if (op)
+    if (op) {
+      io.sockets.emit('push_op', { op: op });
       console.log('SerialPort:data received: ' + op);
-    else
+    } else {
       console.log('SerialPort:data received: ' + raw);
+    }
   });
 });
 
