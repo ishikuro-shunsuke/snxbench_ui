@@ -3,14 +3,24 @@ var path = require('path');
 var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
+var io = require('socket.io').listen(app);
 var bodyParser = require('body-parser');
 var serialport = require('serialport');
 var SerialPort = serialport.SerialPort;
 var serialPort = new SerialPort('COM6', {
   baudrate: 9600,
   buffersize: 1
-  //parser: serialport.parsers.readline("\n")
 }, false);
+
+// socket.io
+io.on('connection', function (socket) {
+  socket.on('push_op', function (op) {
+    console.log('socket:data sending: ' + op);
+    io.sockets.emit('send:op', {
+      op: op
+    });
+  })
+}),
 
 // serialport
 serialPort.open(function() {
@@ -20,7 +30,6 @@ serialPort.open(function() {
     var inst = data[0].toString(2).split("").splice(0,4);
     inst.unshift("0000");
     inst = inst.join("");
-
     var op;
     switch (inst) {
       case '00000000':
@@ -60,19 +69,13 @@ serialPort.open(function() {
       op = 'BAL';
       break;
     }
-      
     if (op)
       console.log('SerialPort:data received: ' + op);
     else
       console.log('SerialPort:data received: ' + raw);
-      
   });
-  /*
-  serialPort.write("ls\n", function(err, results) {
-    console.log('err ' + err);
-    console.log('results ' + results);
-  });*/
 });
+
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
