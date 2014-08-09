@@ -6,21 +6,72 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var serialport = require('serialport');
 var SerialPort = serialport.SerialPort;
-var serialPort = new SerialPort('/dev/ttyUSB0', {
+var serialPort = new SerialPort('COM6', {
   baudrate: 9600,
-  parser: serialport.parsers.readline("\n")
+  buffersize: 1
+  //parser: serialport.parsers.readline("\n")
 }, false);
 
 // serialport
 serialPort.open(function() {
   console.log('SerialPort:open');
   serialPort.on('data', function(data) {
-    console.log('SerialPort:data received: ' + data);
+    var raw  = data[0].toString(2).split("").reverse().join("");
+    var inst = data[0].toString(2).split("").splice(0,4);
+    inst.unshift("0000");
+    inst = inst.join("");
+
+    var op;
+    switch (inst) {
+      case '00000000':
+      op = 'ADD';
+      break;
+      case '00000001':
+      op = 'AND';
+      break;
+      case '00000011':
+      op = 'SLT';
+      break;
+      case '00000100':
+      op = 'NOT';
+      break;
+      case '00000110':
+      op = 'SR';
+      break;
+      case '00000111':
+      op = 'HLT';
+      break;
+      case '00001000':
+      op = 'LD';
+      break;
+      case '00001001':
+      op = 'ST';
+      break;
+      case '00001010':
+      op = 'LDA';
+      break;
+      case '00001011':
+      op = 'AHI';
+      break;
+      case '00001110':
+      op = 'BZ';
+      break;
+      case '00001111':
+      op = 'BAL';
+      break;
+    }
+      
+    if (op)
+      console.log('SerialPort:data received: ' + op);
+    else
+      console.log('SerialPort:data received: ' + raw);
+      
   });
+  /*
   serialPort.write("ls\n", function(err, results) {
     console.log('err ' + err);
     console.log('results ' + results);
-  });
+  });*/
 });
 
 var routes = require('./routes/index');
