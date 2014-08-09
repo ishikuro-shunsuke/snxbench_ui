@@ -1,4 +1,5 @@
-var io = require('socket.io').listen(3001);
+var app = require('http').createServer(handler);
+var io = require('socket.io')(app);
 var serialport = require('serialport');
 var SerialPort = serialport.SerialPort;
 var serialPort = new SerialPort('COM6', {
