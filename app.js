@@ -128,7 +128,7 @@ io.on('connection', function (socket) {
   */
 
   var echos = setInterval(function () {
-    var rand = Math.floor(Math.random() * 4);
+    var rand = Math.floor(Math.random() * 3);
     var op = "";
     if (rand == 0) {
       op = 'ADD';

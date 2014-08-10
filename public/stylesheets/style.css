@@ -6,3 +6,55 @@ body {
 a {
   color: #00B7FF;
 }
+
+.mem {
+  border-radius: 10px;
+  border: 2px solid black;
+  margin: 1em;
+  height: 200px;
+  width: 200px;
+  padding: 1em;
+  background-color: #A6E39D;
+  font-weight: bold;
+  font-size: 120%;
+}
+
+.wire {
+  color: gray;
+  font-size: 1000%;
+}
+
+.fetch {
+  float: left;
+}
+
+.processor {
+  clear: both;
+  border-radius: 10px;
+  border: 1px solid black;
+  margin: 1em;
+  padding: 3em;
+}
+
+.instrs.active {
+  background-color: #CE579B;
+}
+
+.instrs {
+  border-radius: 10px;
+  border: 2px solid black;
+  margin: 1em;
+  float: left;
+  height: 200px;
+  width: 200px;
+  padding: 1em;
+}
+.name {
+  font-weight: bold;
+}
+.sign {
+  font-size: 600%;
+}
+.clear {
+  clear: both;
+}

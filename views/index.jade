@@ -5,4 +5,9 @@ block content
     div
       h1= title
       div(ng-controller="updateCtrl")
-        p {{ current_op }}
+        div
+          div(ng-repeat="inst in instructions" class="instrs" ng-class="{active: isActive($index)}")
+            h3(class="name") {{ inst.name }}
+            p(class="desc") {{ inst.desc }}
+            p(class="sign") {{ inst.sign }}
+        div(class="clear")
