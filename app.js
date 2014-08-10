@@ -61,8 +61,10 @@ app.use(function(err, req, res, next) {
     });
 });
 
-var io = require('socket.io').listen(app);
-
+app.listen(80);
+var http = require('http');
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
 // socket.io
 io.on('connection', function (socket) {
   // serialport
@@ -126,6 +128,8 @@ io.on('connection', function (socket) {
   })
 }),
 
+
+server.listen(3000);
 
 module.exports = app;
 

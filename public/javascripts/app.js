@@ -1,8 +1,8 @@
-var app = angular.module('stockStatusModule', []);
+var app = angular.module('App', []);
 
-app.controller('updateCtrl', function($scope, socket) {
+app.controller('updateCtrl', function( socket) {
   socket.on('push_op', function (data) {
-    op = data;
+    this.op = data;
   })
 });
 
