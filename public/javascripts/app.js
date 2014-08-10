@@ -1,13 +1,15 @@
 var app = angular.module('App', []);
 
 app.controller('updateCtrl', function( socket) {
+  this.op = "";
+
   socket.on('push_op', function (data) {
     this.op = data;
   })
 });
 
 app.factory('socket', function ($rootScope) {
-  var socket = io.connect();
+  var socket = io.connect('http://localhost:3000');
   return {
     on: function (eventName, callback) {
       socket.on(eventName, function () {
