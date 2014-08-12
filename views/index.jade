@@ -9,7 +9,7 @@ block content
             a(ng-click="switchState('programmer')") Programmer
           li
             a(ng-click="switchState('viewer')") Viewer
-        div(ng-show="currentState('programmer')" ng-controller="ProgrammerController")
+        div(ng-if="currentState('programmer')" ng-controller="ProgrammerController")
           div
             form(name="instructionForm" ng-submit="instructionWrite()")
               input(ng-model="instruction.line" class="instr_form")
@@ -17,8 +17,8 @@ block content
             form(name="asmForm" ng-submit="asmWrite()")
               textarea(ng-model="instruction.asm" class="asm_form")
               input(type="submit" value="Go!")
-            p(ng-model="instruction.result")
-        div(ng-show="currentState('viewer')" ng-controller="ViewerController")
+            p(ng-model="instruction.result") {{ instruction.result }}
+        div(ng-if="currentState('viewer')" ng-controller="ViewerController")
           div
             div(ng-repeat="inst in instructions" class="instrs" ng-class="{active: isActive($index)}")
               h3(class="name") {{ inst.name }}

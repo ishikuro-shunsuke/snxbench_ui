@@ -4,18 +4,16 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-// snxasm
-var spawn = require('child_process').spawn;
-var snxasm = spawn('snxasm');
 
-if (process.env.SNX_ENV !== 'standalone' &&
+if ((process.env.SNX_ENV !== 'standalone' &&
+     process.env.SNX_ENV !== 'novisual') &&
     (!process.env.SNX_SERIAL_PORT ||
      !process.env.SNX_SERIAL_BAUDRATE)) {
   console.log("example: SNX_SERIAL_PORT=COM6 SNX_SERIAL_BAUDRATE=9600 node app.js");
   return;
 }
 
-if (process.env.SNX_ENV !== 'standalone') {
+if (process.env.SNX_ENV !== 'standalone' && process.env.SNX_ENV !== 'novisual') {
   var serialport = require('serialport');
   var SerialPort = serialport.SerialPort;
   var serialPort = new SerialPort(process.env.SNX_SERIAL_PORT, {
@@ -25,7 +23,6 @@ if (process.env.SNX_ENV !== 'standalone') {
 }
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
 
 var app = express();
 
@@ -41,7 +38,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/users', users);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -79,7 +75,9 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 // socket.io
 io.on('connection', function (socket) {
-  if (process.env.SNX_ENV === 'standalone') {
+  if (process.env.SNX_ENV === 'novisual') {
+    // nop
+  } else if (process.env.SNX_ENV === 'standalone') {
     console.log('*** demo mode ***');
     // demo mode
     var echos = setInterval(function () {

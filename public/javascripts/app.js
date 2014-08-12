@@ -1,5 +1,6 @@
 var app = angular.module('App', []);
 var servername = location.hostname;
+var serverroot = 'http://' + servername + ':3000';
 
 app.controller('TopStateController', function($scope) {
   $scope.state = 'programmer';
@@ -13,11 +14,14 @@ app.controller('TopStateController', function($scope) {
   };
 });
 
-app.controller('ProgrammerController', function($scope, socket) {
+app.controller('ProgrammerController', function($scope, $http, socket) {
   $scope.instruction = {
-    line : '',
-    asm : '',
-    result: ''
+    line: '',
+    asm: '',
+    hex: '',
+    success: false,
+    result: '',
+    err: ''
   };
 
   $scope.instructionWrite = function() {
@@ -25,18 +29,17 @@ app.controller('ProgrammerController', function($scope, socket) {
     this.instruction.line = '';
   };
 
-  /*
   $scope.asmWrite = function() {
-    snxasm.stdin.write(asm);
+    $http.post('/api/snxasm', {asm: this.instruction.asm}).success(function(data) {
+      if ($scope.instruction.success = data.success) {
+        $scope.instruction.result = 'Succeeded';
+        $scope.instruction.hex = data.hex;
+      } else {
+        $scope.instruction.result = 'Error';
+        $scope.instruction.hex = '';
+      } 
+    });
   };
-
-  snxasm.stderr.on('data', function(data) {
-    this.instruction.result = data;
-  });
-
-  snxasm.stdout.on('data', function(data) {
-    this.instruction.result = data;
-  });*/
 });
 
 app.controller('ViewerController', function($scope, socket) {
@@ -77,7 +80,7 @@ app.controller('ViewerController', function($scope, socket) {
 });
 
 app.factory('socket', function ($rootScope) {
-  var socket = io.connect('http://' + servername + ':3000');
+  var socket = io.connect(serverroot);
   console.log(socket);
   return {
     on: function (eventName, callback) {
