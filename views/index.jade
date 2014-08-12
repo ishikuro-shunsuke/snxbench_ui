@@ -2,12 +2,22 @@ extends layout
 
 block content
   div.container
-    div
+    div(ng-controller="topStateController" ng-init="state='programmer'")
       h1= title
-      div(ng-controller="updateCtrl")
-        div
-          div(ng-repeat="inst in instructions" class="instrs" ng-class="{active: isActive($index)}")
-            h3(class="name") {{ inst.name }}
-            p(class="desc") {{ inst.desc }}
-            p(class="sign") {{ inst.sign }}
+        ul
+          li
+            a(ng-click="switchState('programmer')") Programmer
+          li
+            a(ng-click="switchState('viewer')") Viewer
+        div(ng-show="currentState('programmer')" ng-controller="programmerController")
+          div
+            form(name="instructionForm")
+              input(ng-model="instruction.line" class="instr_form")
+              input(type="submit" value="Write")
+        div(ng-show="currentState('viewer')" ng-controller="viewerController")
+          div
+            div(ng-repeat="inst in instructions" class="instrs" ng-class="{active: isActive($index)}")
+              h3(class="name") {{ inst.name }}
+              p(class="desc") {{ inst.desc }}
+              p(class="sign") {{ inst.sign }}
         div(class="clear")

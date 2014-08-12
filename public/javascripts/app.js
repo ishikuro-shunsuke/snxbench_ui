@@ -1,7 +1,23 @@
 var app = angular.module('App', []);
 var servername = location.hostname;
 
-app.controller('updateCtrl', function($scope, socket) {
+app.controller('topStateController', function($scope) {
+  $scope.state = 'programmer';
+
+  $scope.switchState = function(state) {
+    $scope.state = state;
+  };
+
+  $scope.currentState = function(state) {
+    return $scope.state === state;
+  };
+});
+
+app.controller('programmerController', function($scope, socket) {
+
+});
+
+app.controller('viewerController', function($scope, socket) {
   var active = -1;
   $scope.current_op = '';
 
