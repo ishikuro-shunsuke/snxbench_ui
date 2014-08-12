@@ -4,6 +4,9 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+// snxasm
+var spawn = require('child_process').spawn;
+var snxasm = spawn('snxasm');
 
 if (process.env.SNX_ENV !== 'standalone' &&
     (!process.env.SNX_SERIAL_PORT ||

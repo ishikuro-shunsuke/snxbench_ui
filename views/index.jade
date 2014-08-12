@@ -2,19 +2,23 @@ extends layout
 
 block content
   div.container
-    div(ng-controller="topStateController" ng-init="state='programmer'")
+    div(ng-controller="TopStateController" ng-init="state='programmer'")
       h1= title
         ul
           li
             a(ng-click="switchState('programmer')") Programmer
           li
             a(ng-click="switchState('viewer')") Viewer
-        div(ng-show="currentState('programmer')" ng-controller="programmerController")
+        div(ng-show="currentState('programmer')" ng-controller="ProgrammerController")
           div
-            form(name="instructionForm")
+            form(name="instructionForm" ng-submit="instructionWrite()")
               input(ng-model="instruction.line" class="instr_form")
-              input(type="submit" value="Write")
-        div(ng-show="currentState('viewer')" ng-controller="viewerController")
+              input(type="submit" value="Insert")
+            form(name="asmForm" ng-submit="asmWrite()")
+              textarea(ng-model="instruction.asm" class="asm_form")
+              input(type="submit" value="Go!")
+            p(ng-model="instruction.result")
+        div(ng-show="currentState('viewer')" ng-controller="ViewerController")
           div
             div(ng-repeat="inst in instructions" class="instrs" ng-class="{active: isActive($index)}")
               h3(class="name") {{ inst.name }}

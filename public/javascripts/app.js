@@ -1,7 +1,7 @@
 var app = angular.module('App', []);
 var servername = location.hostname;
 
-app.controller('topStateController', function($scope) {
+app.controller('TopStateController', function($scope) {
   $scope.state = 'programmer';
 
   $scope.switchState = function(state) {
@@ -13,11 +13,33 @@ app.controller('topStateController', function($scope) {
   };
 });
 
-app.controller('programmerController', function($scope, socket) {
+app.controller('ProgrammerController', function($scope, socket) {
+  $scope.instruction = {
+    line : '',
+    asm : '',
+    result: ''
+  };
 
+  $scope.instructionWrite = function() {
+    this.instruction.asm = this.instruction.asm + this.instruction.line + '\n';
+    this.instruction.line = '';
+  };
+
+  /*
+  $scope.asmWrite = function() {
+    snxasm.stdin.write(asm);
+  };
+
+  snxasm.stderr.on('data', function(data) {
+    this.instruction.result = data;
+  });
+
+  snxasm.stdout.on('data', function(data) {
+    this.instruction.result = data;
+  });*/
 });
 
-app.controller('viewerController', function($scope, socket) {
+app.controller('ViewerController', function($scope, socket) {
   var active = -1;
   $scope.current_op = '';
 
