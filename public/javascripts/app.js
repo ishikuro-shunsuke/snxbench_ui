@@ -1,4 +1,5 @@
 var app = angular.module('App', []);
+var servername = location.hostname;
 
 app.controller('updateCtrl', function($scope, socket) {
   var active = -1;
@@ -38,7 +39,7 @@ app.controller('updateCtrl', function($scope, socket) {
 });
 
 app.factory('socket', function ($rootScope) {
-  var socket = io.connect('http://localhost:3000');
+  var socket = io.connect('http://' + servername + ':3000');
   console.log(socket);
   return {
     on: function (eventName, callback) {
