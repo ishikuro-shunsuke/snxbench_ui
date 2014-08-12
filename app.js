@@ -4,12 +4,22 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var serialport = require('serialport');
-var SerialPort = serialport.SerialPort;
-var serialPort = new SerialPort('COM6', {
-  baudrate: 9600,
-  buffersize: 1
-}, false);
+
+if (process.env.SNX_ENV !== 'standalone' &&
+    (!process.env.SNX_SERIAL_PORT ||
+     !process.env.SNX_SERIAL_BAUDRATE)) {
+  console.log("example: SNX_SERIAL_PORT=COM6 SNX_SERIAL_BAUDRATE=9600 node app.js");
+  return;
+}
+
+if (process.env.SNX_ENV !== 'standalone') {
+  var serialport = require('serialport');
+  var SerialPort = serialport.SerialPort;
+  var serialPort = new SerialPort(process.env.SNX_SERIAL_PORT, {
+    baudrate: process.env.SNX_SERIAL_BAUDRATE,
+    buffersize: 1
+  }, false);
+}
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -61,102 +71,105 @@ app.use(function(err, req, res, next) {
     });
 });
 
-//app.listen(3000);
 var http = require('http');
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 // socket.io
-console.log(io);
 io.on('connection', function (socket) {
-  // serialport
-  serialPort.open(function() {
-    console.log('SerialPort:open');
-    serialPort.on('data', function(data) {
-      var raw  = data[0].toString(2).split("").reverse().join("");
-      var inst = data[0].toString(2).split("").splice(0,4);
-      inst.unshift("0000");
-      inst = inst.join("");
-      var op;
-      switch (inst) {
-        case '00000000':
-          op = 'ADD';
-          break;
-        case '00000001':
-          op = 'AND';
-          break;
-        case '00000011':
-          op = 'SLT';
-          break;
-        case '00000100':
-          op = 'NOT';
-          break;
-        case '00000110':
-          op = 'SR';
-          break;
-        case '00000111':
-          op = 'HLT';
-          break;
-        case '00001000':
-          op = 'LD';
-          break;
-        case '00001001':
-          op = 'ST';
-          break;
-        case '00001010':
-          op = 'LDA';
-          break;
-        case '00001011':
-          op = 'AHI';
-          break;
-        case '00001110':
-          op = 'BZ';
-          break;
-        case '00001111':
-          op = 'BAL';
-          break;
+  if (process.env.SNX_ENV === 'standalone') {
+    console.log('*** demo mode ***');
+    // demo mode
+    var echos = setInterval(function () {
+      var rand = Math.floor(Math.random() * 8);
+      var op = "";
+      if (rand == 0) {
+        op = 'ADD';
+      } else if (rand == 1) {
+        op = 'LD';
+      } else if (rand == 2) {
+        op = 'NOT';
+      } else if (rand == 4) {
+        op = 'SLT';
+      } else if (rand == 5) {
+        op = 'SR';
+      } else if (rand == 6) {
+        op = 'SLT';
+      } else if (rand == 7) {
+        op = 'BAL';
+      } else if (rand == 8) {
+        op = 'LDA';
       }
-      if (op) {
-        io.sockets.emit('push_op', op);
-        console.log('SerialPort:data received: ' + op);
-      } else {
-        console.log('SerialPort:data received: ' + raw);
-      }
+      console.log('socket:data sending: ' + op);
+      socket.emit('push_op', op);
+    }, 100);
+  } else {
+    // using serial port
+    serialPort.open(function() {
+      console.log('SerialPort:open');
+      serialPort.on('data', function(data) {
+        var raw  = data[0].toString(2).split("").reverse().join("");
+        var inst = data[0].toString(2).split("").splice(0,4);
+        inst.unshift("0000");
+        inst = inst.join("");
+        var op;
+        switch (inst) {
+          case '00000000':
+            op = 'ADD';
+            break;
+          case '00000001':
+            op = 'AND';
+            break;
+          case '00000011':
+            op = 'SLT';
+            break;
+          case '00000100':
+            op = 'NOT';
+            break;
+          case '00000110':
+            op = 'SR';
+            break;
+          case '00000111':
+            op = 'HLT';
+            break;
+          case '00001000':
+            op = 'LD';
+            break;
+          case '00001001':
+            op = 'ST';
+            break;
+          case '00001010':
+            op = 'LDA';
+            break;
+          case '00001011':
+            op = 'AHI';
+            break;
+          case '00001110':
+            op = 'BZ';
+            break;
+          case '00001111':
+            op = 'BAL';
+            break;
+        }
+        if (op) {
+          io.sockets.emit('push_op', op);
+          console.log('SerialPort:data received: ' + op);
+        } else {
+          console.log('SerialPort:data received: ' + raw);
+        }
+      });
     });
-  });
-
-  /*
-  var echos = setInterval(function () {
-    var rand = Math.floor(Math.random() * 8);
-    var op = "";
-    if (rand == 0) {
-      op = 'ADD';
-    } else if (rand == 1) {
-      op = 'LD';
-    } else if (rand == 2) {
-      op = 'NOT';
-    } else if (rand == 4) {
-      op = 'SLT';
-    } else if (rand == 5) {
-      op = 'SR';
-    } else if (rand == 6) {
-      op = 'SLT';
-    } else if (rand == 7) {
-      op = 'BAL';
-    } else if (rand == 8) {
-      op = 'LDA';
-    }
-    console.log('socket:data sending: ' + op);
-    socket.emit('push_op', op);
-  }, 100);
-  */
+  }
 
   socket.on('push_op', function (op) {
     console.log('socket:data sending: ' + op);
-  })
-}),
+  });
+});
 
-
-server.listen(3000);
+if (process.env.NODE_PORT) {
+  server.listen(process.env.NODE_PORT);
+} else {
+  server.listen(3000);
+}
 
 module.exports = app;
 
