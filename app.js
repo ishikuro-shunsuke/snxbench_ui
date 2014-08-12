@@ -68,6 +68,7 @@ var http = require('http');
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 // socket.io
+console.log(io);
 io.on('connection', function (socket) {
   /*
   // serialport
@@ -128,7 +129,7 @@ io.on('connection', function (socket) {
   */
 
   var echos = setInterval(function () {
-    var rand = Math.floor(Math.random() * 3);
+    var rand = Math.floor(Math.random() * 8);
     var op = "";
     if (rand == 0) {
       op = 'ADD';
@@ -138,6 +139,14 @@ io.on('connection', function (socket) {
       op = 'NOT';
     } else if (rand == 4) {
       op = 'SLT';
+    } else if (rand == 5) {
+      op = 'SR';
+    } else if (rand == 6) {
+      op = 'SLT';
+    } else if (rand == 7) {
+      op = 'BAL';
+    } else if (rand == 8) {
+      op = 'LDA';
     }
     console.log('socket:data sending: ' + op);
     socket.emit('push_op', op);
