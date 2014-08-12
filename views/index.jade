@@ -2,26 +2,62 @@ extends layout
 
 block content
   div.container
-    div(ng-controller="TopStateController" ng-init="state='programmer'")
+    div(class="row" ng-controller="TopStateController" ng-init="state='programmer'")
       h1= title
-        ul
-          li
+      div.row.global-nav
+        ul(class="nav nav-tabs" role="tablist")
+          li(ng-class="currentState('programmer') ? 'active' : ''")
             a(ng-click="switchState('programmer')") Programmer
-          li
+          li(ng-class="currentState('viewer') ? 'active' : ''")
             a(ng-click="switchState('viewer')") Viewer
-        div(ng-if="currentState('programmer')" ng-controller="ProgrammerController")
-          div
+      div(class="row" id="programmer" ng-if="currentState('programmer')" ng-controller="ProgrammerController")
+        div.col-md-6
+          div.row
             form(name="instructionForm" ng-submit="instructionWrite()")
-              input(ng-model="instruction.line" class="instr_form")
-              input(type="submit" value="Insert")
-            form(name="asmForm" ng-submit="asmWrite()")
-              textarea(ng-model="instruction.asm" class="asm_form")
-              input(type="submit" value="Go!")
-            p(ng-model="instruction.result") {{ instruction.result }}
-        div(ng-if="currentState('viewer')" ng-controller="ViewerController")
+              div(class="input-group input-group-lg")
+                input(ng-model="instruction.line" type="text" class="form-control instr_form")
+                span.input-group-btn
+                  button(class="btn btn-primary" type="submit") Insert 
+                    span.glyphicon.glyphicon-play
+          div.row.op-group
+            div(ng-repeat="op in opecodes" class="btn btn-default opecode col-md-3")
+              p(class="name") {{ op.name }}
+              p(class="desc") {{ op.desc }}
+              p(class="sign") {{ op.sign }}
           div
-            div(ng-repeat="inst in instructions" class="instrs" ng-class="{active: isActive($index)}")
-              h3(class="name") {{ inst.name }}
-              p(class="desc") {{ inst.desc }}
-              p(class="sign") {{ inst.sign }}
-        div(class="clear")
+            div imm
+        div.col-md-3
+          div
+            button(class="btn btn-danger btn-lg btn-block" disabled="disabled") inst mem
+          p.wire
+            span.glyphicon.glyphicon-arrow-down
+          div
+            button(class="btn btn-info btn-lg btn-block") $0
+          div
+            button(class="btn btn-info btn-lg btn-block") $1
+          div
+            button(class="btn btn-info btn-lg btn-block") $2
+          div
+            button(class="btn btn-info btn-lg btn-block") $3
+          p.wire
+            span.glyphicon.glyphicon-arrow-down
+          div
+            button(class="btn btn-primary btn-lg btn-block" disabled="disabled") ALU
+          p.wire
+            span.glyphicon.glyphicon-arrow-down
+          div
+            button(class="btn btn-success btn-lg btn-block") data mem
+          p.wire
+            span.glyphicon.glyphicon-arrow-down
+        div.col-md-3
+          form(name="asmForm" ng-submit="asmWrite()")
+            textarea(ng-model="instruction.asm" class="form-control asm_form" rows="20" cols="20")
+            input(class="btn btn-danger btn-lg btn-block" type="submit" value="Go!")
+          p(ng-model="instruction.result") {{ instruction.result }}
+
+      div(class="row" id="viewer" ng-if="currentState('viewer')" ng-controller="ViewerController")
+        div
+          div(ng-repeat="inst in instructions" class="instrs" ng-class="{active: isActive($index)}")
+            h3(class="name") {{ inst.name }}
+            p(class="desc") {{ inst.desc }}
+            p(class="sign") {{ inst.sign }}

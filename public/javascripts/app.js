@@ -24,6 +24,24 @@ app.controller('ProgrammerController', function($scope, $http, socket) {
     err: ''
   };
 
+  $scope.programmerState = 's0';
+
+  $scope.opecodes = [
+    { name: 'ADD', sign: '+', desc: 'たし算をする'},
+    { name: 'AND', sign: '&', desc: '論理積をとる'},
+    { name: 'SLT', sign: '<', desc: '比較する'},
+    { name: 'NOT', sign: '^', desc: '否定をとる'},
+    { name: 'SR',  sign: '>>', desc: '右シフト'},
+    { name: 'HLT', sign: '☠', desc: '終了'},
+    { name: 'LD',  sign: '⇓', desc: '読み出し'},
+    { name: 'ST',  sign: '⇪', desc: '書き込み'},
+    { name: 'LDA', sign: '➸', desc: 'アドレス読み出し'},
+    { name: 'AHI', sign: '+', desc: '数を加える'},
+    { name: 'BZ',  sign: '⌥', desc: '分岐する'},
+    { name: 'BAL', sign: '⌥', desc: '分岐する'},
+ 
+  ];
+
   $scope.instructionWrite = function() {
     this.instruction.asm = this.instruction.asm + this.instruction.line + '\n';
     this.instruction.line = '';
