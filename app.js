@@ -4,14 +4,12 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-/*
 var serialport = require('serialport');
 var SerialPort = serialport.SerialPort;
 var serialPort = new SerialPort('COM6', {
   baudrate: 9600,
   buffersize: 1
 }, false);
-*/
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -70,7 +68,6 @@ var io = require('socket.io').listen(server);
 // socket.io
 console.log(io);
 io.on('connection', function (socket) {
-  /*
   // serialport
   serialPort.open(function() {
     console.log('SerialPort:open');
@@ -126,8 +123,8 @@ io.on('connection', function (socket) {
       }
     });
   });
-  */
 
+  /*
   var echos = setInterval(function () {
     var rand = Math.floor(Math.random() * 8);
     var op = "";
@@ -151,6 +148,7 @@ io.on('connection', function (socket) {
     console.log('socket:data sending: ' + op);
     socket.emit('push_op', op);
   }, 100);
+  */
 
   socket.on('push_op', function (op) {
     console.log('socket:data sending: ' + op);
