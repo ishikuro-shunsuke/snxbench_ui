@@ -17,7 +17,6 @@ router.post('/api/snxasm', function(req, res) {
   };
 
   snxasm.stdin.write(req.body.asm);
-  snxasm.stdin.end();
 
   snxasm.stdout.on('data', function(data) {
     result.hex = data.toString();
@@ -26,8 +25,11 @@ router.post('/api/snxasm', function(req, res) {
     result.error = data.toString();
   });
 
+  snxasm.stdin.end();
+
   snxasm.on('close', function(code) {
-    if (result.err == '') {
+    console.log(result.hex.toString());
+    if (!result.err) {
       result.success = true;
     }
     res.send(result);

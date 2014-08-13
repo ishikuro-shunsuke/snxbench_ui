@@ -108,46 +108,45 @@ io.on('connection', function (socket) {
     serialPort.open(function() {
       console.log('SerialPort:open');
       serialPort.on('data', function(data) {
-        var raw  = data[0].toString(2).split("").reverse().join("");
-        var inst = data[0].toString(2).split("").splice(0,4);
-        inst.unshift("0000");
-        inst = inst.join("");
+        //var raw  = data[0].toString(2).split("").reverse().join("");
+        //var inst = data[0].toString(2).split("").splice(0,4);
+        var inst = data[0].toString(2);
         var op;
         switch (inst) {
           case '00000000':
             op = 'ADD';
             break;
-          case '00000001':
+          case '00010000':
             op = 'AND';
             break;
-          case '00000011':
+          case '00110000':
             op = 'SLT';
             break;
-          case '00000100':
+          case '01000000':
             op = 'NOT';
             break;
-          case '00000110':
+          case '01100000':
             op = 'SR';
             break;
-          case '00000111':
+          case '01110000':
             op = 'HLT';
             break;
-          case '00001000':
+          case '10000000':
             op = 'LD';
             break;
-          case '00001001':
+          case '10010000':
             op = 'ST';
             break;
-          case '00001010':
+          case '10100000':
             op = 'LDA';
             break;
-          case '00001011':
+          case '10110000':
             op = 'AHI';
             break;
-          case '00001110':
+          case '11100000':
             op = 'BZ';
             break;
-          case '00001111':
+          case '11110000':
             op = 'BAL';
             break;
         }

@@ -20,15 +20,19 @@ block content
                     span.glyphicon.glyphicon-remove-sign
                 input(ng-model="instruction.line" type="text" class="form-control instr_form")
                 span.input-group-btn
-                  button(class="btn btn-primary" type="submit") Insert 
+                  button(class="btn btn-primary" ng-disabled="unfinished" type="submit") Insert 
                     span.glyphicon.glyphicon-play
-          div.row.op-group
+          div.row.op-group(ng-if="padMode('op')")
             div(ng-repeat="op in opecodes" ng-click="opClick(op.name)" class="btn btn-default opecode col-md-3")
               p(class="name") {{ op.name }}
               p(class="desc") {{ op.desc }}
               p(class="sign") {{ op.sign }}
-          div
-            div imm
+          div.row.number-pad(ng-if="padMode('num')")
+            div(ng-repeat="n in numberpad" ng-click="numClick(n)" class="btn btn-default opecode col-md-3")
+              p(class="sign") {{ n }}
+            div(ng-click="numFinishClick()" class="btn btn-primary opecode col-md-3")
+              p(class="sign") Enter
+          
         div.col-md-3
           div
             button(class="btn btn-danger btn-lg btn-block" disabled="disabled") inst mem
@@ -43,13 +47,17 @@ block content
           p.wire
             span.glyphicon.glyphicon-arrow-down
           div
-            button(class="btn btn-success btn-lg btn-block") data mem
+            button(class="btn btn-default btn-lg btn-block") data mem
           p.wire
             span.glyphicon.glyphicon-arrow-down
         div.col-md-3
+          ul(ui-sortable="sortableOptions" ng-model="instruction.array" class="instr-mem list-group")
+            li(ng-repeat="instr in instruction.array track by $index" class="list-group-item")
+              span(ng-click="labelClick($index)") [{{ $index }}] {{ instr }}
+              span(ng-click="instrItemRemove($index)")
+                span.glyphicon.glyphicon-remove-sign
           form(name="asmForm" ng-submit="asmWrite()")
-            textarea(ng-model="instruction.asm" class="form-control asm_form" rows="20" cols="20")
-            input(class="btn btn-danger btn-lg btn-block" type="submit" value="Go!")
+            input(class="btn btn-danger btn-lg btn-block" type="submit" value="Write")
           p(ng-model="instruction.result") {{ instruction.result }}
 
       div(class="row" id="viewer" ng-if="currentState('viewer')" ng-controller="ViewerController")

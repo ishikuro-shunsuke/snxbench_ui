@@ -36,6 +36,19 @@ a {
   font-size: 300%;
 }
 
+#programmer .instr-mem {
+  border-radius: 10px;
+  border: 2px solid red;
+  height: 600px;
+  padding: 0;
+  text-align: left;
+  overflow-y: scroll;
+}
+
+#programmer .instr-name {
+  max-width: 100%;
+}
+
 #viewer .mem {
   border-radius: 10px;
   border: 2px solid black;
