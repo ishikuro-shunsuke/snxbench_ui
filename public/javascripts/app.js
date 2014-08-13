@@ -65,17 +65,17 @@ app.controller('ProgrammerController', function($scope, $http, socket) {
     var itype   = ['LD', 'ST', 'LDA', 'AHI', 'BZ', 'BAL'];
 
     if (rtype_0.indexOf(op_name) != -1) {
-      this.instruction.line += ', ';
+      this.instruction.line += ' ';
       $scope.programmerState = 's1';
     } else if (rtype_1.indexOf(op_name) != -1) {
-      this.instruction.line += ', ';
+      this.instruction.line += ' ';
       $scope.programmerState = 's5';
     } else if (op_name === 'HLT') {
       this.instruction.line += ';';
       $scope.programmerState = 's14';
       $scope.unfinished = false;
     } else if (itype.indexOf(op_name) != -1) {
-      this.instruction.line += ', ';
+      this.instruction.line += ' ';
       $scope.programmerState = 's9';
     }
   };
@@ -149,6 +149,7 @@ app.controller('ProgrammerController', function($scope, $http, socket) {
   $scope.asmWrite = function() {
     var send_data = this.instruction.array.join('\n');
     $http.post('/api/snxasm', {asm: send_data}).success(function(data) {
+      console.log('received: ' + JSON.stringify(data));
       if ($scope.instruction.success = data.success) {
         $scope.instruction.result = 'Succeeded';
         $scope.instruction.hex = data.hex;
@@ -182,7 +183,7 @@ app.controller('ViewerController', function($scope, socket) {
   };
 
   $scope.labelClick = function(i) {
-    console.log("aaa");
+    console.log("labelClick");
   };
 
   $scope.instrItemRemove = function(i) {

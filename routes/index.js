@@ -9,14 +9,16 @@ router.get('/', function(req, res) {
 
 router.post('/api/snxasm', function(req, res) {
   var spawn = require('child_process').spawn;
-  var snxasm = spawn('/home/ishikuro/bin/snxasm');
+  var snxasm = spawn('/home/ishikuro/bin/snxasm', ['i']);
   var result = {
     success: false,
     error: '',
     hex: ''
   };
 
-  snxasm.stdin.write(req.body.asm);
+  console.log(req.body.asm);
+
+  snxasm.stdin.write(req.body.asm + '\n');
 
   snxasm.stdout.on('data', function(data) {
     result.hex = data.toString();
@@ -28,10 +30,10 @@ router.post('/api/snxasm', function(req, res) {
   snxasm.stdin.end();
 
   snxasm.on('close', function(code) {
-    console.log(result.hex.toString());
     if (!result.err) {
       result.success = true;
     }
+    console.log(result);
     res.send(result);
   });
 });
