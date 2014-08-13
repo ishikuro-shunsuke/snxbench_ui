@@ -15,12 +15,15 @@ block content
           div.row
             form(name="instructionForm" ng-submit="instructionWrite()")
               div(class="input-group input-group-lg")
+                span.input-group-btn
+                  button(class="btn btn-default" type="button" ng-click="removeClick()")
+                    span.glyphicon.glyphicon-remove-sign
                 input(ng-model="instruction.line" type="text" class="form-control instr_form")
                 span.input-group-btn
                   button(class="btn btn-primary" type="submit") Insert 
                     span.glyphicon.glyphicon-play
           div.row.op-group
-            div(ng-repeat="op in opecodes" class="btn btn-default opecode col-md-3")
+            div(ng-repeat="op in opecodes" ng-click="opClick(op.name)" class="btn btn-default opecode col-md-3")
               p(class="name") {{ op.name }}
               p(class="desc") {{ op.desc }}
               p(class="sign") {{ op.sign }}
@@ -31,14 +34,8 @@ block content
             button(class="btn btn-danger btn-lg btn-block" disabled="disabled") inst mem
           p.wire
             span.glyphicon.glyphicon-arrow-down
-          div
-            button(class="btn btn-info btn-lg btn-block") $0
-          div
-            button(class="btn btn-info btn-lg btn-block") $1
-          div
-            button(class="btn btn-info btn-lg btn-block") $2
-          div
-            button(class="btn btn-info btn-lg btn-block") $3
+          div(ng-repeat="reg in registers")
+            button(class="btn btn-info btn-lg btn-block" ng-click="regClick(reg)") {{ reg }}
           p.wire
             span.glyphicon.glyphicon-arrow-down
           div

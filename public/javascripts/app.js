@@ -17,6 +17,7 @@ app.controller('TopStateController', function($scope) {
 app.controller('ProgrammerController', function($scope, $http, socket) {
   $scope.instruction = {
     line: '',
+    array: [],
     asm: '',
     hex: '',
     success: false,
@@ -39,12 +40,80 @@ app.controller('ProgrammerController', function($scope, $http, socket) {
     { name: 'AHI', sign: '+', desc: '数を加える'},
     { name: 'BZ',  sign: '⌥', desc: '分岐する'},
     { name: 'BAL', sign: '⌥', desc: '分岐する'},
- 
   ];
 
-  $scope.instructionWrite = function() {
-    this.instruction.asm = this.instruction.asm + this.instruction.line + '\n';
+  $scope.registers = ['$0', '$1', '$2', '$3'];
+
+  $scope.opClick = function(op_name) {
+    this.instruction.line = op_name;
+
+    var rtype_0 = ['ADD', 'AND', 'SLT'];
+    var rtype_1 = ['NOR', 'SR'];
+    var itype   = ['LD', 'ST', 'LDA', 'AHI', 'BZ', 'BAL'];
+
+    if (rtype_0.indexOf(op_name) != -1) {
+      this.instruction.line += ', ';
+      $scope.programmerState = 's1';
+    } else if (rtype_1.indexOf(op_name) != -1) {
+      this.instruction.line += ', ';
+      $scope.programmerState = 's5';
+    } else if (op_name === 'HLT') {
+      this.instruction.line += ';';
+      $scope.programmerState = 's14';
+    } else if (itpye.indexOf(op_name) != -1) {
+      this.instruction.line += ', ';
+      $scope.programmerState = 's9';
+    }
+  };
+
+  $scope.regClick = function(reg_name) {
+    this.instruction.line += reg_name;
+
+    switch ($scope.programmerState) {
+      case 's1':
+        this.instruction.line += ', ';
+        $scope.programmerState = 's2';
+        break;
+      case 's2':
+        this.instruction.line += ', ';
+        $scope.programmerState = 's3';
+        break;
+      case 's3':
+        this.instruction.line += ';';
+        $scope.programmerState = 's14';
+        break;
+      case 's5':
+        this.instruction.line += ', ';
+        $scope.programmerState = 's6';
+        break;
+      case 's6':
+        this.instruction.line += ';';
+        $scope.programmerState = 's14';
+        break;
+      case 's9':
+        this.instruction.line += ', ';
+        $scope.programmerState = 's10';
+        break;
+      case 's11':
+        this.instruction.line += ';';
+        $scope.programmerState = 's14';
+        break;
+    }
+  };
+
+  $scope.removeClick = function() {
+    $scope.programmerState = 's0';
     this.instruction.line = '';
+  };
+
+  $scope.instructionWrite = function() {
+    if (!this.instruction.line)
+      return;
+
+    this.instruction.asm = this.instruction.asm + this.instruction.line + '\n';
+    this.instruction.array.push(this.instrcution.line);
+    this.instruction.line = '';
+    $scope.programmerState = 's0';
   };
 
   $scope.asmWrite = function() {
