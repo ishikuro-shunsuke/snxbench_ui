@@ -2,6 +2,33 @@ var app = angular.module('App', ['ui.sortable']);
 var servername = location.hostname;
 var serverroot = 'http://' + servername + ':3000';
 
+// socket.io
+app.factory('socket', function ($rootScope) {
+  var socket = io.connect(serverroot);
+  console.log(socket);
+  return {
+    on: function (eventName, callback) {
+      socket.on(eventName, function () {
+        var args = arguments;
+        $rootScope.$apply(function () {
+          callback.apply(socket, args);
+        });
+      });
+    },
+    emit: function (eventName, data, callback) {
+      socket.emit(eventName, data, function () {
+        var args = arguments;
+        $rootScope.$apply(function () {
+          if (callback) {
+            callback.apply(socket, args);
+          }
+        });
+      });
+    }
+  };
+});
+
+// Global controller
 app.controller('TopStateController', function($scope) {
   $scope.state = 'programmer';
   $scope.switchState = function(state) {
@@ -13,6 +40,7 @@ app.controller('TopStateController', function($scope) {
   };
 });
 
+// Programmer
 app.controller('ProgrammerController', function($scope, $http, socket) {
   $scope.pad_mode = 'op';
 
@@ -161,6 +189,7 @@ app.controller('ProgrammerController', function($scope, $http, socket) {
   };
 });
 
+// Viewer
 app.controller('ViewerController', function($scope, socket) {
   var active = -1;
   $scope.current_op = '';
@@ -204,31 +233,6 @@ app.controller('ViewerController', function($scope, socket) {
     { name: 'BZ',  sign: '⌥', desc: '分岐する'},
     { name: 'BAL', sign: '⌥', desc: '分岐する'},
   ];
-});
-
-app.factory('socket', function ($rootScope) {
-  var socket = io.connect(serverroot);
-  console.log(socket);
-  return {
-    on: function (eventName, callback) {
-      socket.on(eventName, function () {
-        var args = arguments;
-        $rootScope.$apply(function () {
-          callback.apply(socket, args);
-        });
-      });
-    },
-    emit: function (eventName, data, callback) {
-      socket.emit(eventName, data, function () {
-        var args = arguments;
-        $rootScope.$apply(function () {
-          if (callback) {
-            callback.apply(socket, args);
-          }
-        });
-      });
-    }
-  };
 });
 
 
